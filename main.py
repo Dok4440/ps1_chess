@@ -1,8 +1,7 @@
 import chess
-import urllib.parse
+import requests
 
 board = chess.Board()
-
 
 def play_move(player_move):
     try:
@@ -21,16 +20,20 @@ def play_move(player_move):
 
 def get_board_image_url():
     fen = board.fen()
-    encoded_fen = urllib.parse.quote(fen, safe='')
-    base_url = "https://lichess.org/editor/"
-    url = base_url + encoded_fen
+    url = f"https://www.chess.com/dynboard?fen={fen}&size=3"
 
-    return url
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.url
+    else:
+        print(f"Error getting board image URL: {response.status_code}")
+        return None
 
 
 while not board.is_game_over():
     player_move = input("move: ")
     image_url = play_move(player_move)
-    print(image_url)
+    if image_url:
+        print(image_url)
 
 print("Game over.")
