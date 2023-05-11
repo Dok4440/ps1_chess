@@ -52,147 +52,91 @@ wiringpi.wiringPiSetup()
 pin_CS_adc = 16 #We will use w16 as CE, not the default pin w15!
 wiringpi.pinMode(pin_CS_adc, 1) # Set ce to mode 1 ( OUTPUT )
 wiringpi.wiringPiSPISetupMode(1, 0, 500000, 0) #(channel, port, speed, mode)
+counter = 0
 
 while not board.is_game_over():
-
-    ActivateADC()
-    LDR_E2 = readadc(0)  # read from channel 0
-    DeactivateADC()
-
-    if LDR_E2 < 70:
+    
+    while counter != 5:
+        # move 1
+    
         player_first_move = "e2"
         print("pawn selected")
-        time.sleep(5)
-
-        ActivateADC()
-        LDR_E4 = readadc(1)  # read from channel 1
-        DeactivateADC()
-
-        if LDR_E4 < 70:
-            player_second_move = "e4"
-            print("moving pawn to", player_second_move)
-
-        # aborts if nothing in selected in time
-        else:
-            print("no move selected in time, try again")
-
+        time.sleep(2)
+    
+        player_second_move = "e4"
+        print("moving pawn to", player_second_move)
+  
         player_move = player_first_move +  player_second_move
         image_url = play_move(player_move)
         if image_url:
             print(image_url)
-    
-    ActivateADC()
-    LDR_E7 = readadc(3)
-    DeactivateADC()
-    # F6
+        counter += 1
 
-    if LDR_E7 < 70:
+
+        # move 2
+    
         player_first_move = "e7"
         print("pawn selected")
-        time.sleep(5)
-
-        ActivateADC()
-        LDR_E5 = readadc(4)  # read from channel 1
-        DeactivateADC()
-
-        if LDR_E5 < 70:
-            player_second_move = "e5"
-            print("moving pawn to", player_second_move)
-
-        # aborts if nothing in selected in time
-        else:
-            print("no move selected in time, try again")
-
+        time.sleep(2)
+    
+        player_second_move = "e5"
+        print("moving pawn to", player_second_move)
+  
         player_move = player_first_move +  player_second_move
         image_url = play_move(player_move)
         if image_url:
             print(image_url)
+        counter += 1
 
-
-    ActivateADC()
-    LDR_D1 = readadc(1)
-    DeactivateADC()
-
-    if LDR_D1 < 70:
+        # move 3
+    
         player_first_move = "d1"
         print("queen selected")
-        time.sleep(5)
-
-        ActivateADC()
-        LDR_F3 = readadc(2)  # read from channel 1
-        DeactivateADC()
-
-        if LDR_F3 < 70:
-            player_second_move = "f3"
-            print("moving queen to", player_second_move)
-
-        # aborts if nothing in selected in time
-        else:
-            print("no move selected in time, try again")
-
+        time.sleep(2)
+    
+        player_second_move = "f3"
+        print("moving queen to", player_second_move)
+  
         player_move = player_first_move +  player_second_move
         image_url = play_move(player_move)
         if image_url:
             print(image_url)
+        counter += 1
 
+        # move 4
     
-    ActivateADC()
-    LDR_B8 = readadc(3)
-    DeactivateADC()
-
-
-    if LDR_B8 < 70:
         player_first_move = "b8"
         print("knight selected")
-        time.sleep(5)
-
-        ActivateADC()
-        LDR_C6 = readadc(4)  # read from channel 1
-        DeactivateADC()
-
-        if LDR_C6 < 70:
-            player_second_move = "c6"
-            print("moving knight to", player_second_move)
-
-        # aborts if nothing in selected in time
-        else:
-            print("no move selected in time, try again")
-
+        time.sleep(2)
+    
+        player_second_move = "c6"
+        print("moving knight to", player_second_move)
+  
         player_move = player_first_move +  player_second_move
         image_url = play_move(player_move)
         if image_url:
             print(image_url)
-
+        counter += 1
     
-    ActivateADC()
-    LDR_F1 = readadc(1)
-    DeactivateADC()
-    # F6
-
-    if LDR_F1 < 70:
+        # move 5
+    
         player_first_move = "f1"
         print("bischop selected")
-        time.sleep(5)
-
-        ActivateADC()
-        LDR_C4 = readadc(2)  # read from channel 1
-        DeactivateADC()
-
-        if LDR_C4 < 70:
-            player_second_move = "c4"
-            print("moving bischop to", player_second_move)
-
-        # aborts if nothing in selected in time
-        else:
-            print("no move selected in time, try again")
-
+        time.sleep(2)
+    
+        player_second_move = "c4"
+        print("moving bischop to", player_second_move)
+  
         player_move = player_first_move +  player_second_move
         image_url = play_move(player_move)
         if image_url:
             print(image_url)
+        counter += 1
+    
+    # move 6
 
     ActivateADC()
-    LDR_D7 = readadc(3)
+    LDR_D7 = readadc(0)
     DeactivateADC()
     # F6
 
@@ -202,7 +146,7 @@ while not board.is_game_over():
         time.sleep(5)
 
         ActivateADC()
-        LDR_D6 = readadc(4)  # read from channel 1
+        LDR_D6 = readadc(1)  # read from channel 1
         DeactivateADC()
 
         if LDR_D6 < 70:
@@ -219,8 +163,10 @@ while not board.is_game_over():
             print(image_url)
 
         
+    # move 7
+    
     ActivateADC()
-    LDR_F3 = readadc(1)
+    LDR_F3 = readadc(3)
     DeactivateADC()
 
     if LDR_F3 < 70:
@@ -229,7 +175,7 @@ while not board.is_game_over():
         time.sleep(5)
 
         ActivateADC()
-        LDR_F7 = readadc(2)  # read from channel 1
+        LDR_F7 = readadc(4)  # read from channel 1
         DeactivateADC()
 
         if LDR_F7 < 70:
