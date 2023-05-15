@@ -1,14 +1,45 @@
+import requests
+from selenium import webdriver
 import chess
 import requests
 import time
 import wiringpi
-import sys
+import chess.svg
+
 
 board = chess.Board()
+browser = webdriver.Firefox()
+browser.maximize_window()
+browser.get("https://www.chess.com/dynboard?fen=rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR%20b%20KQkq%20-%200%201&size=3")
+wiringpi.wiringPiSetup()
+pin_CS_adc = 16
+wiringpi.pinMode(pin_CS_adc, 1)
+wiringpi.wiringPiSPISetupMode(1, 0, 500000, 0)
+counter = 0
 
-def play_move(player_move):
+
+def readadc(adcnum):
+    if ((adcnum > 7) or (adcnum < 0)):
+        return -1
+    revlen, recvData = wiringpi.wiringPiSPIDataRW(1, bytes([1,(8+adcnum)<<4,0]))
+    time.sleep(0.000005)
+    adcout = ((recvData[1]&3) << 8) + recvData[2]
+    return adcout
+
+
+def ActivateADC ():
+    wiringpi.digitalWrite(pin_CS_adc, 0) # Actived ADC using CS
+    time.sleep(0.000005)
+
+
+def DeactivateADC():
+    wiringpi.digitalWrite(pin_CS_adc, 1) # Deactived ADC using CS
+    time.sleep(0.000005)
+
+
+def play_move(p_move):
     try:
-        move = board.parse_uci(player_move)
+        move = board.parse_uci(p_move)
     except ValueError:
         print("Invalid move format, try again.")
         return
@@ -32,113 +63,73 @@ def get_board_image_url():
         print(f"Error getting board image URL: {response.status_code}")
         return None
 
-def readadc(adcnum):
-    if ((adcnum > 7) or (adcnum < 0)):
-        return -1
-    revlen, recvData = wiringpi.wiringPiSPIDataRW(1, bytes([1,(8+adcnum)<<4,0]))
-    time.sleep(0.000005)
-    adcout = ((recvData[1]&3) << 8) + recvData[2]
-    return adcout
-
-def ActivateADC ():
-    wiringpi.digitalWrite(pin_CS_adc, 0) # Actived ADC using CS
-    time.sleep(0.000005)
-
-def DeactivateADC():
-    wiringpi.digitalWrite(pin_CS_adc, 1) # Deactived ADC using CS
-    time.sleep(0.000005)
-
-wiringpi.wiringPiSetup()
-pin_CS_adc = 16 #We will use w16 as CE, not the default pin w15!
-wiringpi.pinMode(pin_CS_adc, 1) # Set ce to mode 1 ( OUTPUT )
-wiringpi.wiringPiSPISetupMode(1, 0, 500000, 0) #(channel, port, speed, mode)
-counter = 0
 
 while not board.is_game_over():
-    
     while counter != 5:
         # move 1
-    
-        player_first_move = "e2"
         print("pawn selected")
         time.sleep(2)
-    
-        player_second_move = "e4"
-        print("moving pawn to", player_second_move)
-  
-        player_move = player_first_move +  player_second_move
+        print("moving pawn to e4")
+        
+        player_move = "e2e4"
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
+
         counter += 1
 
-
         # move 2
-    
-        player_first_move = "e7"
         print("pawn selected")
         time.sleep(2)
-    
-        player_second_move = "e5"
-        print("moving pawn to", player_second_move)
-  
-        player_move = player_first_move +  player_second_move
+        print("moving pawn to e5")
+
+        player_move = "e7e5"
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
+
         counter += 1
 
         # move 3
-    
-        player_first_move = "d1"
         print("queen selected")
         time.sleep(2)
-    
-        player_second_move = "f3"
-        print("moving queen to", player_second_move)
-  
-        player_move = player_first_move +  player_second_move
+        print("moving queen to f3")
+
+        player_move = "d1f3"
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
+
         counter += 1
 
         # move 4
-    
-        player_first_move = "b8"
         print("knight selected")
         time.sleep(2)
-    
-        player_second_move = "c6"
-        print("moving knight to", player_second_move)
-  
-        player_move = player_first_move +  player_second_move
+        print("moving knight to c6")
+
+        player_move = "b8c6"
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
+
         counter += 1
-    
+
         # move 5
-    
-        player_first_move = "f1"
-        print("bischop selected")
+        print("bishop selected")
         time.sleep(2)
-    
-        player_second_move = "c4"
-        print("moving bischop to", player_second_move)
-  
-        player_move = player_first_move +  player_second_move
+        print("moving bishop to c4")
+
+        player_move = "f1c4"
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
         counter += 1
-    
+
     # move 6
 
     ActivateADC()
     LDR_D7 = readadc(0)
     DeactivateADC()
-    # F6
 
     if LDR_D7 < 70:
         player_first_move = "d7"
@@ -157,16 +148,15 @@ while not board.is_game_over():
         else:
             print("no move selected in time, try again")
 
-        player_move = player_first_move +  player_second_move
+        player_move = player_first_move + player_second_move
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
 
-        
     # move 7
-    
+
     ActivateADC()
-    LDR_F3 = readadc(3)
+    LDR_F3 = readadc(2)
     DeactivateADC()
 
     if LDR_F3 < 70:
@@ -175,7 +165,7 @@ while not board.is_game_over():
         time.sleep(5)
 
         ActivateADC()
-        LDR_F7 = readadc(4)  # read from channel 1
+        LDR_F7 = readadc(3)  # read from channel 1
         DeactivateADC()
 
         if LDR_F7 < 70:
@@ -186,9 +176,9 @@ while not board.is_game_over():
         else:
             print("no move selected in time, try again")
 
-        player_move = player_first_move +  player_second_move
+        player_move = player_first_move + player_second_move
         image_url = play_move(player_move)
         if image_url:
-            print(image_url)
+            browser.get(image_url)
 
 print("Game over.")
