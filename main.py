@@ -4,7 +4,6 @@ import chess
 import requests
 import time
 import wiringpi
-import chess.svg
 
 
 board = chess.Board()
