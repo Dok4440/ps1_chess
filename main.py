@@ -1,7 +1,6 @@
 import requests
 from selenium import webdriver
 import chess
-import requests
 import time
 import wiringpi
 
