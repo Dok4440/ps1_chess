@@ -20,9 +20,9 @@ In the following diagram, you see where on the bigger board these sensors would 
 
 De code of this demo (main.py) is written to do 4 moves automatically, and then continue with the sensors. The user selects the square **d7** and then hovers over the sensor appointed to **d6** to make the move. The same procedure follows for the moves ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) **Qf7-Qf3** (Q = queen)
 
-Required PIP packages: `python-chess`, `requests`, `time`, `wiringpi`, `selenium`. These packages have to be installed for the program to work.
+Setup your Orange Pi 3 LTS as shown below, download the code and run it in a **__GUI instance ON the OPi__**, if this script is ran in a terminal that is unable to open a graphical interface, the script will fail. This is because it has to open a Firefox instance.
 
-Setup your Orange Pi 3 LTS as shown below, download the code and run it in a **__GUI instance ON the OPi.__**, if this script is ran in a terminal that is unable to open a graphical interface, the script will fail. This is because it has to open a FireFox instance.
+\* Note: these PIP packages have to be installed for the program to work: `python-chess`, `requests`, `time`, `wiringpi`, `selenium`
 
 ### Physical setup
 <!-- ![breadboard1](/img/breadboard1.jpg) -->
